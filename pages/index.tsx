@@ -21,8 +21,8 @@ const quadrants = {
   }
 };
 
-function Logo({ quadrant = 'qd1' }) {
-  const color = quadrants[quadrant].color;
+function Logo({ quadrant = 'qd1' }: { quadrant?: string }) {
+  const color = quadrants[quadrant as keyof typeof quadrants].color;
   return (
     <svg width="50" height="50" viewBox="0 0 50 50" style={{ cursor: 'pointer' }}>
       <rect x="8" y="8" width="34" height="34" fill="white" stroke={color} strokeWidth="2" />
@@ -211,7 +211,7 @@ function QuizEntrada({ onComplete }) {
 }
 
 function CategoriesGrid({ selectedQD }) {
-  const data = quadrants[selectedQD];
+  const data = quadrants[selectedQD as keyof typeof quadrants]];
   return (
     <div>
       <h2 style={{ color: data.color, marginBottom: '25px' }}>
@@ -282,7 +282,7 @@ export default function CubotopTemplate() {
         transition: 'border-color 0.3s'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <Logo quadrant={currentQD} />
+          <Logo quadrants[currentQD as keyof typeof quadrants]} />
           <div>
             <h1 style={{ margin: 0, fontSize: '2em' }}>Cubotop</h1>
             <p style={{ margin: '5px 0 0 0', color: '#999', fontSize: '0.9em' }}>
