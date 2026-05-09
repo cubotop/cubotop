@@ -19,10 +19,12 @@ const quadrants = {
     bgColor: 'rgb(123, 45, 139, 0.1)',
     categories: ['Jogos', 'Filmes', 'Música', 'TV', 'Quadrinhos', 'Lugares', 'Literatura', 'Séries', 'Arte']
   }
-};
+} as const;
+
+type QuadrantKey = keyof typeof quadrants;
 
 function Logo({ quadrant = 'qd1' }: { quadrant?: string }) {
-  const color = quadrants[quadrant as keyof typeof quadrants].color;
+  const color = quadrants[quadrant as QuadrantKey].color;
   return (
     <svg width="50" height="50" viewBox="0 0 50 50" style={{ cursor: 'pointer' }}>
       <rect x="8" y="8" width="34" height="34" fill="white" stroke={color} strokeWidth="2" />
@@ -141,16 +143,16 @@ function QuizEntrada({ onComplete }: { onComplete: (qd: string) => void }) {
   if (result) {
     return (
       <div style={{
-        background: quadrants[result as keyof typeof quadrants].color,
+        background: quadrants[result as QuadrantKey].color,
         color: 'white',
         padding: '40px',
         borderRadius: '10px',
         textAlign: 'center'
       }}>
         <h2>🎯 Sua categoria principal:</h2>
-        <h1 style={{ fontSize: '2em', margin: '10px 0' }}>{quadrants[result as keyof typeof quadrants].name}</h1>
+        <h1 style={{ fontSize: '2em', margin: '10px 0' }}>{quadrants[result as QuadrantKey].name}</h1>
         <p>Comece explorando:</p>
-        <p style={{ fontSize: '1.1em', fontWeight: 'bold' }}>{quadrants[result as keyof typeof quadrants].categories.slice(0, 3).join(' · ')}</p>
+        <p style={{ fontSize: '1.1em', fontWeight: 'bold' }}>{quadrants[result as QuadrantKey].categories.slice(0, 3).join(' · ')}</p>
       </div>
     );
   }
@@ -213,7 +215,7 @@ function QuizEntrada({ onComplete }: { onComplete: (qd: string) => void }) {
 }
 
 function CategoriesGrid({ selectedQD }: { selectedQD: string }) {
-  const data = quadrants[selectedQD as keyof typeof quadrants];
+  const data = quadrants[selectedQD as QuadrantKey];
   return (
     <div>
       <h2 style={{ color: data.color, marginBottom: '25px' }}>
@@ -257,7 +259,7 @@ function CategoriesGrid({ selectedQD }: { selectedQD: string }) {
 }
 
 export default function CubotopTemplate() {
-  const [currentQD, setCurrentQD] = useState('qd1');
+  const [currentQD, setCurrentQD] = useState<string>('qd1');
   const [showQuiz, setShowQuiz] = useState(false);
   const [hasCompletedQuiz, setHasCompletedQuiz] = useState(false);
 
@@ -281,7 +283,7 @@ export default function CubotopTemplate() {
         justifyContent: 'space-between',
         marginBottom: '40px',
         paddingBottom: '20px',
-        borderBottom: `3px solid ${quadrants[currentQD as keyof typeof quadrants].color}`,
+        borderBottom: `3px solid ${quadrants[currentQD as QuadrantKey].color}`,
         transition: 'border-color 0.3s'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -297,7 +299,7 @@ export default function CubotopTemplate() {
           onClick={() => setShowQuiz(!showQuiz)}
           style={{
             padding: '10px 20px',
-            background: quadrants[currentQD as keyof typeof quadrants].color,
+            background: quadrants[currentQD as QuadrantKey].color,
             color: 'white',
             border: 'none',
             borderRadius: '5px',
@@ -356,8 +358,8 @@ export default function CubotopTemplate() {
               <div style={{
                 marginTop: '40px',
                 padding: '20px',
-                background: quadrants[currentQD as keyof typeof quadrants].bgColor,
-                border: `2px solid ${quadrants[currentQD as keyof typeof quadrants].color}`,
+                background: quadrants[currentQD as QuadrantKey].bgColor,
+                border: `2px solid ${quadrants[currentQD as QuadrantKey].color}`,
                 borderRadius: '8px',
                 textAlign: 'center'
               }}>
