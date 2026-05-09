@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const quadrants = {
   qd1: {
@@ -35,10 +35,10 @@ function Logo({ quadrant = 'qd1' }: { quadrant?: string }) {
   );
 }
 
-function QuizEntrada({ onComplete }) {
+function QuizEntrada({ onComplete }: { onComplete: (qd: string) => void }) {
   const [current, setCurrent] = useState(0);
-  const [answers, setAnswers] = useState([]);
-  const [result, setResult] = useState(null);
+  const [answers, setAnswers] = useState<string[]>([]);
+  const [result, setResult] = useState<string | null>(null);
 
   const questions = [
     {
@@ -115,19 +115,19 @@ function QuizEntrada({ onComplete }) {
     }
   ];
 
-  const intelligenceToQD = {
+  const intelligenceToQD: Record<string, string> = {
     ling: 'qd2', esp: 'qd3', mus: 'qd3', corp: 'qd1',
     inter: 'qd2', log: 'qd2', nat: 'qd1', intra: 'qd2'
   };
 
-  function handleAnswer(type) {
+  function handleAnswer(type: string) {
     const newAnswers = [...answers, type];
     setAnswers(newAnswers);
 
     if (current < questions.length - 1) {
       setCurrent(current + 1);
     } else {
-      const counts = {};
+      const counts: Record<string, number> = {};
       newAnswers.forEach(a => {
         const qd = intelligenceToQD[a];
         counts[qd] = (counts[qd] || 0) + 1;
@@ -141,16 +141,16 @@ function QuizEntrada({ onComplete }) {
   if (result) {
     return (
       <div style={{
-        background: quadrants[result].color,
+        background: quadrants[result as keyof typeof quadrants].color,
         color: 'white',
         padding: '40px',
         borderRadius: '10px',
         textAlign: 'center'
       }}>
         <h2>🎯 Sua categoria principal:</h2>
-        <h1 style={{ fontSize: '2em', margin: '10px 0' }}>{quadrants[result].name}</h1>
+        <h1 style={{ fontSize: '2em', margin: '10px 0' }}>{quadrants[result as keyof typeof quadrants].name}</h1>
         <p>Comece explorando:</p>
-        <p style={{ fontSize: '1.1em', fontWeight: 'bold' }}>{quadrants[result].categories.slice(0, 3).join(' · ')}</p>
+        <p style={{ fontSize: '1.1em', fontWeight: 'bold' }}>{quadrants[result as keyof typeof quadrants].categories.slice(0, 3).join(' · ')}</p>
       </div>
     );
   }
@@ -194,12 +194,14 @@ function QuizEntrada({ onComplete }) {
               textAlign: 'left'
             }}
             onMouseEnter={(e) => {
-              e.target.style.borderColor = '#FF6D00';
-              e.target.style.background = '#2a2a2a';
+              const target = e.target as HTMLButtonElement;
+              target.style.borderColor = '#FF6D00';
+              target.style.background = '#2a2a2a';
             }}
             onMouseLeave={(e) => {
-              e.target.style.borderColor = '#555';
-              e.target.style.background = '#222';
+              const target = e.target as HTMLButtonElement;
+              target.style.borderColor = '#555';
+              target.style.background = '#222';
             }}
           >
             {opt.text}
@@ -210,8 +212,8 @@ function QuizEntrada({ onComplete }) {
   );
 }
 
-function CategoriesGrid({ selectedQD }) {
-  const data = quadrants[selectedQD as keyof typeof quadrants]];
+function CategoriesGrid({ selectedQD }: { selectedQD: string }) {
+  const data = quadrants[selectedQD as keyof typeof quadrants];
   return (
     <div>
       <h2 style={{ color: data.color, marginBottom: '25px' }}>
@@ -236,12 +238,14 @@ function CategoriesGrid({ selectedQD }) {
               color: 'white'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = data.color;
-              e.currentTarget.style.color = 'white';
+              const target = e.currentTarget as HTMLDivElement;
+              target.style.background = data.color;
+              target.style.color = 'white';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = data.bgColor;
-              e.currentTarget.style.color = 'white';
+              const target = e.currentTarget as HTMLDivElement;
+              target.style.background = data.bgColor;
+              target.style.color = 'white';
             }}
           >
             <div style={{ fontWeight: 'bold' }}>{cat}</div>
@@ -257,7 +261,7 @@ export default function CubotopTemplate() {
   const [showQuiz, setShowQuiz] = useState(false);
   const [hasCompletedQuiz, setHasCompletedQuiz] = useState(false);
 
-  function handleQuizComplete(qd) {
+  function handleQuizComplete(qd: string) {
     setCurrentQD(qd);
     setHasCompletedQuiz(true);
     setShowQuiz(false);
@@ -271,18 +275,17 @@ export default function CubotopTemplate() {
       padding: '30px 20px',
       fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif'
     }}>
-      {/* Header */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: '40px',
         paddingBottom: '20px',
-        borderBottom: `3px solid ${quadrants[currentQD].color}`,
+        borderBottom: `3px solid ${quadrants[currentQD as keyof typeof quadrants].color}`,
         transition: 'border-color 0.3s'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <Logo quadrants[currentQD as keyof typeof quadrants]} />
+          <Logo quadrant={currentQD} />
           <div>
             <h1 style={{ margin: 0, fontSize: '2em' }}>Cubotop</h1>
             <p style={{ margin: '5px 0 0 0', color: '#999', fontSize: '0.9em' }}>
@@ -294,7 +297,7 @@ export default function CubotopTemplate() {
           onClick={() => setShowQuiz(!showQuiz)}
           style={{
             padding: '10px 20px',
-            background: quadrants[currentQD].color,
+            background: quadrants[currentQD as keyof typeof quadrants].color,
             color: 'white',
             border: 'none',
             borderRadius: '5px',
@@ -302,20 +305,24 @@ export default function CubotopTemplate() {
             fontWeight: 'bold',
             transition: 'all 0.2s'
           }}
-          onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-          onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+          onMouseEnter={(e) => {
+            const target = e.target as HTMLButtonElement;
+            target.style.transform = 'scale(1.05)';
+          }}
+          onMouseLeave={(e) => {
+            const target = e.target as HTMLButtonElement;
+            target.style.transform = 'scale(1)';
+          }}
         >
           {showQuiz ? '← Voltar' : '🎯 Quiz'}
         </button>
       </div>
 
-      {/* Main Content */}
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         {showQuiz ? (
           <QuizEntrada onComplete={handleQuizComplete} />
         ) : (
           <>
-            {/* Quadrant Selector */}
             <div style={{
               display: 'flex',
               gap: '15px',
@@ -343,16 +350,14 @@ export default function CubotopTemplate() {
               ))}
             </div>
 
-            {/* Categories Grid */}
             <CategoriesGrid selectedQD={currentQD} />
 
-            {/* Info Box */}
             {hasCompletedQuiz && (
               <div style={{
                 marginTop: '40px',
                 padding: '20px',
-                background: quadrants[currentQD].bgColor,
-                border: `2px solid ${quadrants[currentQD].color}`,
+                background: quadrants[currentQD as keyof typeof quadrants].bgColor,
+                border: `2px solid ${quadrants[currentQD as keyof typeof quadrants].color}`,
                 borderRadius: '8px',
                 textAlign: 'center'
               }}>
@@ -365,7 +370,6 @@ export default function CubotopTemplate() {
         )}
       </div>
 
-      {/* Footer */}
       <div style={{
         marginTop: '60px',
         paddingTop: '20px',
